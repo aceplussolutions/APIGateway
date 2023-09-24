@@ -1,0 +1,60 @@
+server:
+  port: 9000
+
+spring:
+  config:
+    import: optional:configserver:http://host.docker.internal:8071/
+  application:
+    name: gatewayserver
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedHeaders:
+              - "Origin"
+              - "Content-Type"
+              - "Accept"
+              - "Authorization"
+              - "Referer"
+            allowedMethods:
+              - POST
+              - GET
+              - OPTIONS
+            default-filters:
+              - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin, RETAIN_FIRST
+eureka:
+  instance:
+    preferIpAddress: true
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://host.docker.internal:9002/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  gateway:
+    enabled: true
+  info:
+    env:
+      enabled: true
+
+## Configuring info endpoint
+info:
+  app:
+    name: Gateway Server Microservice
+    description: Gateway Server Application
+    version: 1.0.0
+
+
+
